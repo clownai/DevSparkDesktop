@@ -1,0 +1,71 @@
+{
+  "name": "devspark-desktop",
+  "version": "1.0.0",
+  "description": "DevSpark IDE Desktop Application",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clownai/DevSpark.git"
+  },
+  "keywords": [
+    "IDE",
+    "code-editor",
+    "development",
+    "electron",
+    "desktop",
+    "ai-assistant"
+  ],
+  "author": "clownai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clownai/DevSpark/issues"
+  },
+  "homepage": "https://github.com/clownai/DevSpark#readme",
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "electron-log": "^5.0.1",
+    "electron-updater": "^6.1.4",
+    "monaco-editor": "^0.44.0",
+    "node-pty": "^1.0.0",
+    "simple-git": "^3.20.0"
+  },
+  "build": {
+    "appId": "com.clownai.devspark",
+    "productName": "DevSpark IDE",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/icons/mac/icon.icns"
+    },
+    "win": {
+      "icon": "assets/icons/win/icon.ico"
+    },
+    "linux": {
+      "icon": "assets/icons/png",
+      "category": "Development",
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ]
+    }
+  }
+}

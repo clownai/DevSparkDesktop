@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSpark IDE</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-icons">
+                <button id="explorer-btn" class="sidebar-icon active" title="Explorer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M3 12h18"></path>
+                        <path d="M3 18h18"></path>
+                    </svg>
+                </button>
+                <button id="search-btn" class="sidebar-icon" title="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button id="git-btn" class="sidebar-icon" title="Source Control">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="18" r="3"></circle>
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <path d="M6 21V9a9 9 0 0 0 9 9"></path>
+                    </svg>
+                </button>
+                <button id="ai-btn" class="sidebar-icon" title="AI Assistant">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                </button>
+                <button id="deploy-btn" class="sidebar-icon" title="Deployment">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Explorer Panel -->
+        <div class="panel explorer-panel active">
+            <div class="panel-header">
+                <h3>EXPLORER</h3>
+                <div class="panel-actions">
+                    <button id="new-file-btn" title="New File">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                    </button>
+                    <button id="new-folder-btn" title="New Folder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            <line x1="12" y1="11" x2="12" y2="17"></line>
+                            <line x1="9" y1="14" x2="15" y2="14"></line>
+                        </svg>
+                    </button>
+                    <button id="refresh-btn" title="Refresh">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <polyline points="23 20 23 14 17 14"></polyline>
+                            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                        </svg>
+                    </button>
+                    <button id="collapse-all-btn" title="Collapse All">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="4 14 10 14 10 20"></polyline>
+                            <polyline points="20 10 14 10 14 4"></polyline>
+                            <line x1="14" y1="10" x2="21" y2="3"></line>
+                            <line x1="3" y1="21" x2="10" y2="14"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="file-explorer">
+                <div class="folder">
+                    <div class="folder-header">
+                        <span class="folder-toggle expanded">▼</span>
+                        <span class="folder-name">src</span>
+                    </div>
+                    <div class="folder-content">
+                        <div class="folder">
+                            <div class="folder-header">
+                                <span class="folder-toggle expanded">▼</span>
+                                <span class="folder-name">components</span>
+                            </div>
+                            <div class="folder-content">
+                                <div class="file">ai-integration-ui.js</div>
+                                <div class="file">git-integration-ui.js</div>
+                                <div class="file">deployment-ui.js</div>
+                                <div class="file">scaffolding-ui.js</div>
+                            </div>
+                        </div>
+                        <div class="folder">
+                            <div class="folder-header">
+                                <span class="folder-toggle expanded">▼</span>
+                                <span class="folder-name">services</span>
+                            </div>
+                            <div class="folder-content">
+                                <div class="file">ai-service.js</div>
+                                <div class="file">git-service.js</div>
+                                <div class="file">deployment-service.js</div>
+                                <div class="file">scaffolding-service.js</div>
+                                <div class="file">api-service.js</div>
+                            </div>
+                        </div>
+                        <div class="folder">
+                            <div class="folder-header">
+                                <span class="folder-toggle expanded">▼</span>
+                                <span class="folder-name">styles</span>
+                            </div>
+                            <div class="folder-content">
+                                <div class="file">main.css</div>
+                            </div>
+                        </div>
+                        <div class="file">index.html</div>
+                        <div class="file">main.js</div>
+                    </div>
+                </div>
+                <div class="file">package.json</div>
+                <div class="file">README.md</div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active">
+                    <span>main.js</span>
+                    <button class="close-tab">×</button>
+                </div>
+                <div class="tab">
+                    <span>index.html</span>
+                    <button class="close-tab">×</button>
+                </div>
+                <div class="tab">
+                    <span>ai-service.js</span>
+                    <button class="close-tab">×</button>
+                </div>
+            </div>
+
+            <!-- Editor -->
+            <div class="editor-container" id="monaco-editor"></div>
+
+            <!-- AI Assistant Panel -->
+            <div class="ai-assistant-panel">
+                <div class="ai-assistant-header">
+                    <h3>AI Assistant</h3>
+                    <button class="close-ai-panel">×</button>
+                </div>
+                <div class="ai-assistant-content">
+                    <div class="ai-message">
+                        <div class="ai-avatar">AI</div>
+                        <div class="ai-message-content">
+                            <p>Hello! I'm your AI coding assistant. How can I help you today?</p>
+                        </div>
+                    </div>
+                    <div class="user-message">
+                        <div class="user-avatar">You</div>
+                        <div class="user-message-content">
+                            <p>Can you help me optimize this function?</p>
+                        </div>
+                    </div>
+                    <div class="ai-message">
+                        <div class="ai-avatar">AI</div>
+                        <div class="ai-message-content">
+                            <p>I'd be happy to help optimize your function. Looking at your code, I see a few opportunities for improvement:</p>
+                            <pre><code>// Optimized version
+function calculateTotal(items) {
+  return items.reduce((total, { price, quantity }) => 
+    total + price * quantity, 0);
+}</code></pre>
+                            <p>This version uses destructuring in the parameter list for cleaner code and is more concise while maintaining readability.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-assistant-input">
+                    <textarea placeholder="Ask the AI assistant..."></textarea>
+                    <button class="send-ai-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal -->
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-tabs">
+                    <div class="terminal-tab active">Terminal</div>
+                    <div class="terminal-tab">Output</div>
+                    <div class="terminal-tab">Problems</div>
+                </div>
+                <div class="terminal-actions">
+                    <button class="terminal-action" title="New Terminal">+</button>
+                    <button class="terminal-action" title="Kill Terminal">×</button>
+                    <button class="terminal-action" title="Maximize">▲</button>
+                </div>
+            </div>
+            <div class="terminal">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command">npm install</span>
+                </div>
+                <div class="terminal-output">
+                    <div>added 1250 packages, and audited 1251 packages in 25s</div>
+                    <div>125 packages are looking for funding</div>
+                    <div>run `npm fund` for details</div>
+                    <div>&nbsp;</div>
+                    <div>found 0 vulnerabilities</div>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command">npm start</span>
+                </div>
+                <div class="terminal-output">
+                    <div>> devspark-ide@1.0.0 start</div>
+                    <div>> electron .</div>
+                    <div>&nbsp;</div>
+                    <div>DevSpark IDE started successfully!</div>
+                </div>
+                <div class="terminal-line current-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-input"></span>
+                    <span class="terminal-cursor">█</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span class="status-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="18" r="3"></circle>
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <path d="M6 21V9a9 9 0 0 0 9 9"></path>
+                    </svg>
+                    main
+                </span>
+                <span class="status-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    0 Problems
+                </span>
+            </div>
+            <div class="status-right">
+                <span class="status-item">JavaScript</span>
+                <span class="status-item">UTF-8</span>
+                <span class="status-item">LF</span>
+                <span class="status-item">Ln 42, Col 18</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
