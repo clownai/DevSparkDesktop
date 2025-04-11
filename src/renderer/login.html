@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSpark Desktop - Login</title>
+    <style>
+        :root {
+            /* Dark game theme colors */
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #252525;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --accent-primary: #8A2BE2; /* Purple */
+            --accent-secondary: #FF5722; /* Orange */
+            --highlight: #00E5FF; /* Cyan */
+            --border-color: #333333;
+            --error: #ff4d4d;
+            --success: #4caf50;
+            
+            /* Glow effects */
+            --glow-small: 0 0 5px rgba(138, 43, 226, 0.5);
+            --glow-medium: 0 0 15px rgba(138, 43, 226, 0.6);
+            --glow-large: 0 0 25px rgba(138, 43, 226, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+        }
+        
+        .login-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+        }
+        
+        .login-image {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glow-medium);
+            border: 1px solid var(--accent-primary);
+            min-height: 500px;
+        }
+        
+        .login-image-content {
+            text-align: center;
+            padding: 2rem;
+            z-index: 2;
+        }
+        
+        .login-image-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--accent-primary), var(--highlight));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow-small);
+        }
+        
+        .login-image-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin-top: 2rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-icon {
+            margin-right: 1rem;
+            color: var(--highlight);
+            font-size: 1.5rem;
+        }
+        
+        .login-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 2.5rem;
+            box-shadow: var(--glow-medium);
+            border: 1px solid var(--accent-primary);
+            position: relative;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .login-logo {
+            margin-bottom: 1.5rem;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .login-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-primary), var(--highlight));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--glow-small);
+        }
+        
+        .login-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-form {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 4px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: var(--glow-small);
+            outline: none;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 0.5rem;
+            accent-color: var(--accent-primary);
+        }
+        
+        .forgot-password {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .forgot-password:hover {
+            color: var(--highlight);
+            text-shadow: var(--glow-small);
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-button:hover {
+            box-shadow: var(--glow-medium);
+            transform: translateY(-2px);
+        }
+        
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: left 0.7s ease;
+        }
+        
+        .login-button:hover::before {
+            left: 100%;
+        }
+        
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+        }
+        
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+        
+        .login-divider span {
+            padding: 0 1rem;
+        }
+        
+        .oauth-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .oauth-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .oauth-button:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--glow-small);
+            transform: translateY(-2px);
+        }
+        
+        .oauth-button i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .oauth-button.google i {
+            color: #DB4437;
+        }
+        
+        .oauth-button.github i {
+            color: #f5f5f5;
+        }
+        
+        .oauth-button.microsoft i {
+            color: #00a1f1;
+        }
+        
+        .oauth-button.apple i {
+            color: #A2AAAD;
+        }
+        
+        .login-footer {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        
+        .signup-link {
+            color: var(--highlight);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .signup-link:hover {
+            color: var(--accent-secondary);
+            text-shadow: var(--glow-small);
+        }
+        
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--bg-tertiary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--bg-tertiary) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.2;
+            z-index: 1;
+        }
+        
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-primary);
+            animation: particle-animation linear infinite;
+        }
+        
+        @keyframes particle-animation {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(var(--end-y)) translateX(var(--end-x));
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-right: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-image {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.5rem;
+            }
+            
+            .oauth-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="grid-background"></div>
+    <div class="particles-container" id="particles"></div>
+    
+    <div class="login-container">
+        <div class="login-grid">
+            <div class="login-image">
+                <div class="login-image-content">
+                    <h2 class="login-image-title">DevSpark Desktop</h2>
+                    <p class="login-image-subtitle">The ultimate AI-integrated development environment for modern developers</p>
+                    
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSJ1cmwoI2dyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CiAgICA8cGF0aCBkPSJNMzAgNTAgTDQ1IDM1IEw0NSA0NSBMNzAgNDUgTDcwIDU1IEw0NSA1NSBMNDUgNjUgWiIgZmlsbD0idXJsKCNncmFkaWVudCkiLz4KICAgIDxkZWZzPgogICAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjOEEyQkUyIi8+CiAgICAgICAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwRTVGRiIvPgogICAgICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8L2RlZnM+Cjwvc3ZnPg==" alt="DevSpark Logo" width="150">
+                    
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon"><i class="fas fa-code"></i></span>
+                            <span>Modern Code Editor with AI Integration</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"><i class="fas fa-robot"></i></span>
+                            <span>Context-aware Code Suggestions</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"><i class="fas fa-code-branch"></i></span>
+                            <span>Built-in Git Integration</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"><i class="fas fa-rocket"></i></span>
+                            <span>One-click Deployment</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"><i class="fas fa-terminal"></i></span>
+                            <span>Integrated Terminal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="45" stroke="url(#gradient)" stroke-width="2" fill="none"/>
+                            <path d="M30 50 L45 35 L45 45 L70 45 L70 55 L45 55 L45 65 Z" fill="url(#gradient)"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#8A2BE2"/>
+                                    <stop offset="100%" stop-color="#00E5FF"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h1 class="login-title">Welcome Back</h1>
+                    <p class="login-subtitle">Sign in to continue to DevSpark Desktop</p>
+                </div>
+                
+                <form class="login-form" id="login-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-button" id="login-button">
+                        <span class="loading-spinner" id="login-spinner"></span>
+                        <span id="login-text">Sign In</span>
+                    </button>
+                </form>
+                
+                <div class="login-divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="oauth-buttons">
+                    <button class="oauth-button google" data-provider="google">
+                        <i class="fab fa-google"></i>
+                        <span>Google</span>
+                    </button>
+                    
+                    <button class="oauth-button github" data-provider="github">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </button>
+                    
+                    <button class="oauth-button microsoft" data-provider="microsoft">
+                        <i class="fab fa-microsoft"></i>
+                        <span>Microsoft</span>
+                    </button>
+                    
+                    <button class="oauth-button apple" data-provider="apple">
+                        <i class="fab fa-apple"></i>
+                        <span>Apple</span>
+                    </button>
+                </div>
+                
+                <div class="login-footer">
+                    <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create particle background
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setupFormHandlers();
+        });
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                
+                // Random end position for animation
+                const endX = (Math.random() - 0.5) * 200;
+                const endY = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--end-x', `${endX}px`);
+                particle.style.setProperty('--end-y', `${endY}px`);
+                
+                // Random animation duration between 20s and 40s
+                const duration = Math.random() * 20 + 20;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random delay
+                const delay = Math.random() * 5;
+                particle.style.animationDelay = `${delay}s`;
+                
+                // Random color (accent primary, accent secondary, or highlight)
+                const colors = ['#8A2BE2', '#FF5722', '#00E5FF'];
+                const colorIndex = Math.floor(Math.random() * colors.length);
+                particle.style.backgroundColor = colors[colorIndex];
+                particle.style.boxShadow = `0 0 10px ${colors[colorIndex]}, 0 0 20px ${colors[colorIndex]}`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function setupFormHandlers() {
+            // Form submission handling
+            const loginForm = document.getElementById('login-form');
+            const loginButton = document.getElementById('login-button');
+            const loginSpinner = document.getElementById('login-spinner');
+            const loginText = document.getElementById('login-text');
+            
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // In a real application, this would send the credentials to the server
+                    // For now, we'll just simulate a successful login
+                    
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (email && password) {
+                        // Show loading state
+                        loginSpinner.style.display = 'inline-block';
+                        loginText.textContent = 'Signing in...';
+                        loginButton.disabled = true;
+                        
+                        // Simulate API call
+                        setTimeout(() => {
+                            // In a real desktop app, this would close the login window and open the main app
+                            showSuccessMessage();
+                        }, 1500);
+                    }
+                });
+            }
+
+            // OAuth button handlers
+            const oauthButtons = document.querySelectorAll('.oauth-button');
+            oauthButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const provider = this.getAttribute('data-provider');
+                    
+                    // In a real application, this would open a browser window for OAuth
+                    // For now, we'll just simulate the OAuth flow
+                    
+                    // Show loading state
+                    const originalContent = this.innerHTML;
+                    this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Connecting...</span>`;
+                    this.disabled = true;
+                    
+                    // Add glow effect
+                    this.style.boxShadow = 'var(--glow-medium)';
+                    
+                    // Simulate OAuth redirect and callback
+                    setTimeout(() => {
+                        // In a real desktop app, this would close the login window and open the main app
+                        showSuccessMessage();
+                    }, 1500);
+                });
+            });
+        }
+
+        function showSuccessMessage() {
+            // Create a success message overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = '9999';
+            
+            const message = document.createElement('div');
+            message.style.backgroundColor = 'var(--bg-secondary)';
+            message.style.padding = '2rem';
+            message.style.borderRadius = '8px';
+            message.style.textAlign = 'center';
+            message.style.maxWidth = '400px';
+            message.style.boxShadow = 'var(--glow-medium)';
+            message.style.border = '1px solid var(--accent-primary)';
+            
+            message.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Login Successful!</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Welcome to DevSpark Desktop. The application is now loading...</p>
+                <div style="width: 100%; height: 4px; background-color: var(--bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: 1rem;">
+                    <div id="progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-primary), var(--highlight)); transition: width 2s ease;"></div>
+                </div>
+            `;
+            
+            overlay.appendChild(message);
+            document.body.appendChild(overlay);
+            
+            // Animate progress bar
+            setTimeout(() => {
+                document.getElementById('progress-bar').style.width = '100%';
+            }, 100);
+            
+            // In a real application, this would actually launch the main app
+            setTimeout(() => {
+                message.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                    <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Code!</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">DevSpark Desktop has been launched successfully.</p>
+                    <button id="close-button" style="padding: 0.75rem 1.5rem; background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary)); color: white; border: none; border-radius: 4px; cursor: pointer;">Continue</button>
+                `;
+                
+                document.getElementById('close-button').addEventListener('click', function() {
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(overlay);
+                    }, 500);
+                });
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
