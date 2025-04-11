@@ -419,6 +419,26 @@
             }
         }
         
+        /* Message styles */
+        .message {
+            padding: 0.85rem;
+            border-radius: 4px;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        
+        .error-message {
+            background-color: rgba(255, 77, 77, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+        
+        .success-message {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .login-grid {
@@ -499,6 +519,9 @@
                     <p class="login-subtitle">Sign in to continue to DevSpark Desktop</p>
                 </div>
                 
+                <div id="error-message" class="message error-message"></div>
+                <div id="success-message" class="message success-message"></div>
+                
                 <form class="login-form" id="login-form">
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
@@ -516,7 +539,7 @@
                             <label for="remember">Remember me</label>
                         </div>
                         
-                        <a href="#" class="forgot-password">Forgot password?</a>
+                        <a href="#" class="forgot-password" id="forgot-password">Forgot password?</a>
                     </div>
                     
                     <button type="submit" class="login-button" id="login-button">
@@ -530,40 +553,61 @@
                 </div>
                 
                 <div class="oauth-buttons">
-                    <button class="oauth-button google" data-provider="google">
+                    <button type="button" class="oauth-button google" data-provider="google">
                         <i class="fab fa-google"></i>
                         <span>Google</span>
                     </button>
                     
-                    <button class="oauth-button github" data-provider="github">
+                    <button type="button" class="oauth-button github" data-provider="github">
                         <i class="fab fa-github"></i>
                         <span>GitHub</span>
                     </button>
                     
-                    <button class="oauth-button microsoft" data-provider="microsoft">
+                    <button type="button" class="oauth-button microsoft" data-provider="microsoft">
                         <i class="fab fa-microsoft"></i>
                         <span>Microsoft</span>
                     </button>
                     
-                    <button class="oauth-button apple" data-provider="apple">
+                    <button type="button" class="oauth-button apple" data-provider="apple">
                         <i class="fab fa-apple"></i>
                         <span>Apple</span>
                     </button>
                 </div>
                 
                 <div class="login-footer">
-                    <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+                    <p>Don't have an account? <a href="#" class="signup-link" id="signup-link">Sign up</a></p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Access Electron APIs through contextBridge
+        const { supabaseAuth, ipcRenderer } = window.electron;
+        
         // Create particle background
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
             setupFormHandlers();
+            setupOAuthHandlers();
+            setupForgotPasswordHandler();
+            setupSignupHandler();
+            
+            // Check if user is already logged in
+            checkAuthState();
         });
+        
+        async function checkAuthState() {
+            try {
+                const isAuthenticated = await ipcRenderer.invoke('auth:check-session');
+                if (isAuthenticated) {
+                    // User is already logged in, redirect to main app
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Error checking auth state:', error);
+            }
+        }
 
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
@@ -611,120 +655,196 @@
         }
 
         function setupFormHandlers() {
-            // Form submission handling
             const loginForm = document.getElementById('login-form');
-            const loginButton = document.getElementById('login-button');
-            const loginSpinner = document.getElementById('login-spinner');
-            const loginText = document.getElementById('login-text');
+            if (!loginForm) return;
             
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                if (email && password) {
+                    // Show loading state
+                    const loginButton = document.getElementById('login-button');
+                    const loginSpinner = document.getElementById('login-spinner');
+                    const loginText = document.getElementById('login-text');
+                    
+                    loginSpinner.style.display = 'inline-block';
+                    loginText.textContent = 'Signing in...';
+                    loginButton.disabled = true;
+                    
+                    try {
+                        // Sign in with Supabase through IPC
+                        const result = await ipcRenderer.invoke('auth:sign-in-with-password', {
+                            email,
+                            password
+                        });
+                        
+                        // Show success message
+                        showSuccessMessage('Login successful! Loading your workspace...');
+                        
+                        // Redirect to main app after a short delay
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                        
+                    } catch (error) {
+                        // Show error message
+                        showErrorMessage(error.message || 'Failed to sign in. Please check your credentials.');
+                        
+                        // Reset loading state
+                        loginSpinner.style.display = 'none';
+                        loginText.textContent = 'Sign In';
+                        loginButton.disabled = false;
+                    }
+                }
+            });
+        }
+
+        function setupOAuthHandlers() {
+            const oauthButtons = document.querySelectorAll('.oauth-button');
+            
+            oauthButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const provider = this.getAttribute('data-provider');
+                    
+                    if (provider) {
+                        try {
+                            // Show loading state
+                            button.disabled = true;
+                            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Connecting...</span>`;
+                            
+                            // Sign in with OAuth provider through IPC
+                            await ipcRenderer.invoke('auth:sign-in-with-oauth', {
+                                provider
+                            });
+                            
+                            // Note: The auth window will be handled by the main process
+                            // We don't need to handle redirect here
+                        } catch (error) {
+                            showErrorMessage(`Failed to sign in with ${provider}: ${error.message}`);
+                            
+                            // Reset button state
+                            button.disabled = false;
+                            button.innerHTML = `<i class="fab fa-${provider}"></i> <span>${provider.charAt(0).toUpperCase() + provider.slice(1)}</span>`;
+                        }
+                    }
+                });
+            });
+        }
+        
+        function setupForgotPasswordHandler() {
+            const forgotPasswordLink = document.getElementById('forgot-password');
+            
+            if (forgotPasswordLink) {
+                forgotPasswordLink.addEventListener('click', async function(e) {
                     e.preventDefault();
                     
-                    // In a real application, this would send the credentials to the server
-                    // For now, we'll just simulate a successful login
+                    const email = document.getElementById('email').value;
+                    
+                    if (!email) {
+                        showErrorMessage('Please enter your email address to reset your password.');
+                        return;
+                    }
+                    
+                    try {
+                        await ipcRenderer.invoke('auth:reset-password', { email });
+                        showSuccessMessage('Password reset email sent. Please check your inbox.');
+                    } catch (error) {
+                        showErrorMessage(`Failed to send reset email: ${error.message}`);
+                    }
+                });
+            }
+        }
+        
+        function setupSignupHandler() {
+            const signupLink = document.getElementById('signup-link');
+            
+            if (signupLink) {
+                signupLink.addEventListener('click', function(e) {
+                    e.preventDefault();
                     
                     const email = document.getElementById('email').value;
                     const password = document.getElementById('password').value;
                     
-                    if (email && password) {
-                        // Show loading state
-                        loginSpinner.style.display = 'inline-block';
-                        loginText.textContent = 'Signing in...';
-                        loginButton.disabled = true;
-                        
-                        // Simulate API call
-                        setTimeout(() => {
-                            // In a real desktop app, this would close the login window and open the main app
-                            showSuccessMessage();
-                        }, 1500);
+                    if (!email || !password) {
+                        showErrorMessage('Please enter email and password to sign up.');
+                        return;
                     }
-                });
-            }
-
-            // OAuth button handlers
-            const oauthButtons = document.querySelectorAll('.oauth-button');
-            oauthButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const provider = this.getAttribute('data-provider');
-                    
-                    // In a real application, this would open a browser window for OAuth
-                    // For now, we'll just simulate the OAuth flow
                     
                     // Show loading state
-                    const originalContent = this.innerHTML;
-                    this.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Connecting...</span>`;
-                    this.disabled = true;
+                    const loginButton = document.getElementById('login-button');
+                    const loginSpinner = document.getElementById('login-spinner');
+                    const loginText = document.getElementById('login-text');
                     
-                    // Add glow effect
-                    this.style.boxShadow = 'var(--glow-medium)';
+                    loginSpinner.style.display = 'inline-block';
+                    loginText.textContent = 'Signing up...';
+                    loginButton.disabled = true;
                     
-                    // Simulate OAuth redirect and callback
-                    setTimeout(() => {
-                        // In a real desktop app, this would close the login window and open the main app
-                        showSuccessMessage();
-                    }, 1500);
+                    // Sign up with Supabase through IPC
+                    ipcRenderer.invoke('auth:sign-up', {
+                        email,
+                        password
+                    })
+                        .then(() => {
+                            showSuccessMessage('Registration successful! Please check your email to confirm your account.');
+                            
+                            // Reset loading state
+                            loginSpinner.style.display = 'none';
+                            loginText.textContent = 'Sign In';
+                            loginButton.disabled = false;
+                        })
+                        .catch(error => {
+                            showErrorMessage(`Failed to sign up: ${error.message}`);
+                            
+                            // Reset loading state
+                            loginSpinner.style.display = 'none';
+                            loginText.textContent = 'Sign In';
+                            loginButton.disabled = false;
+                        });
                 });
-            });
+            }
         }
-
-        function showSuccessMessage() {
-            // Create a success message overlay
-            const overlay = document.createElement('div');
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            overlay.style.display = 'flex';
-            overlay.style.alignItems = 'center';
-            overlay.style.justifyContent = 'center';
-            overlay.style.zIndex = '9999';
+        
+        function showErrorMessage(message) {
+            const errorElement = document.getElementById('error-message');
+            const successElement = document.getElementById('success-message');
             
-            const message = document.createElement('div');
-            message.style.backgroundColor = 'var(--bg-secondary)';
-            message.style.padding = '2rem';
-            message.style.borderRadius = '8px';
-            message.style.textAlign = 'center';
-            message.style.maxWidth = '400px';
-            message.style.boxShadow = 'var(--glow-medium)';
-            message.style.border = '1px solid var(--accent-primary)';
-            
-            message.innerHTML = `
-                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-                <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Login Successful!</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Welcome to DevSpark Desktop. The application is now loading...</p>
-                <div style="width: 100%; height: 4px; background-color: var(--bg-tertiary); border-radius: 2px; overflow: hidden; margin-bottom: 1rem;">
-                    <div id="progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-primary), var(--highlight)); transition: width 2s ease;"></div>
-                </div>
-            `;
-            
-            overlay.appendChild(message);
-            document.body.appendChild(overlay);
-            
-            // Animate progress bar
-            setTimeout(() => {
-                document.getElementById('progress-bar').style.width = '100%';
-            }, 100);
-            
-            // In a real application, this would actually launch the main app
-            setTimeout(() => {
-                message.innerHTML = `
-                    <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
-                    <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Ready to Code!</h2>
-                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">DevSpark Desktop has been launched successfully.</p>
-                    <button id="close-button" style="padding: 0.75rem 1.5rem; background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary)); color: white; border: none; border-radius: 4px; cursor: pointer;">Continue</button>
-                `;
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
                 
-                document.getElementById('close-button').addEventListener('click', function() {
-                    overlay.style.opacity = '0';
-                    overlay.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => {
-                        document.body.removeChild(overlay);
-                    }, 500);
-                });
-            }, 2500);
+                // Hide success message if it's visible
+                if (successElement) {
+                    successElement.style.display = 'none';
+                }
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function showSuccessMessage(message) {
+            const successElement = document.getElementById('success-message');
+            const errorElement = document.getElementById('error-message');
+            
+            if (successElement) {
+                successElement.textContent = message;
+                successElement.style.display = 'block';
+                
+                // Hide error message if it's visible
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    successElement.style.display = 'none';
+                }, 5000);
+            }
         }
     </script>
 </body>
