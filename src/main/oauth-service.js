@@ -39,6 +39,22 @@ class OAuthService {
                 tokenUrl: 'https://appleid.apple.com/auth/token',
                 scope: 'name email',
                 responseType: 'code'
+            },
+            twitter: {
+                clientId: 'YOUR_TWITTER_CLIENT_ID',
+                redirectUri: 'https://devspark.app/auth/twitter/callback',
+                authUrl: 'https://twitter.com/i/oauth2/authorize',
+                tokenUrl: 'https://api.twitter.com/2/oauth2/token',
+                scope: 'tweet.read users.read',
+                responseType: 'code'
+            },
+            discord: {
+                clientId: 'YOUR_DISCORD_CLIENT_ID',
+                redirectUri: 'https://devspark.app/auth/discord/callback',
+                authUrl: 'https://discord.com/api/oauth2/authorize',
+                tokenUrl: 'https://discord.com/api/oauth2/token',
+                scope: 'identify email',
+                responseType: 'code'
             }
         };
         
@@ -137,6 +153,12 @@ class OAuthService {
             case 'apple':
                 // Apple doesn't have a user info endpoint, user info is in the ID token
                 return { provider: 'apple' };
+            case 'twitter':
+                userInfoUrl = 'https://api.twitter.com/2/users/me';
+                break;
+            case 'discord':
+                userInfoUrl = 'https://discord.com/api/users/@me';
+                break;
             default:
                 throw new Error(`Provider ${provider} not supported`);
         }
@@ -151,9 +173,9 @@ class OAuthService {
         return {
             provider,
             id: userData.id || userData.sub,
-            name: userData.name || userData.display_name,
+            name: userData.name || userData.display_name || userData.username,
             email: userData.email,
-            avatar: userData.picture || userData.avatar_url,
+            avatar: userData.picture || userData.avatar_url || userData.avatar,
             raw: userData
         };
     }
